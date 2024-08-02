@@ -1,0 +1,77 @@
+import json
+
+def parse_resume(resume_text):
+    # Define section headings to parse
+    section_headings = ['Education', 'Projects', 'Skills', 'Software / Tools', 'Certifications', 'Personal Details', 'Activities']
+    
+    # Initialize dictionary to hold parsed content
+    resume_dict = {}
+    
+    # Split resume text into sections based on known section headings
+    lines = resume_text.split('\n')
+    current_section = None
+    section_content = []
+
+    for line in lines:
+        # Check if the line starts with a known section heading
+        if any(line.startswith(heading) for heading in section_headings):
+            if current_section:
+                # Save previous section content if it exists
+                resume_dict[current_section] = "\n".join(section_content).strip()
+            # Start a new section
+            current_section = next(heading for heading in section_headings if line.startswith(heading))
+            section_content = [line]
+        else:
+            # Continue adding lines to the current section
+            section_content.append(line)
+    
+    # Save the last section content
+    if current_section:
+        resume_dict[current_section] = "\n".join(section_content).strip()
+
+    # Return JSON formatted resume
+    return json.dumps(resume_dict, indent=4)
+
+# Example resume text input
+resume_text = """
+Education
+B.Tech: Vishwakarma University, Pune | Computer Engineering | 2021-2025
+Diploma: Yashwantrao Chavan Institute of Polytechnic, Beed | Computer | 81.26% | 2018-2021
+SSC: Champavati Vidyalaya, Beed | 81.20% | 2018
+
+Projects
+Blockchain Security: Blockchain Report
+Student Database Management System: MySQL
+Memory Allocation Detection: SP | Generate the System Report
+Car Racing Game: Python
+
+Skills
+• Cyber Security
+• Communication
+• Leadership
+• Project Management
+• Presentation
+• Teamwork
+
+Software / Tools
+Microsoft Power (Advanced)
+MS Office
+Python (Intermediate)
+Excel Working
+MySQL (Intermediate)
+
+Certifications
+100 Days of Code: The Complete Python Pro Bootcamp for 2024 - Udemy - 2024
+Data Science Course - Infosys Springboard - 2024
+Concept of Java - Infosys Springboard - 2024
+Swayam Course - Programming of Java
+
+Personal Details
+DoB: 07-Feb-2002
+Gender: Female
+Nationality: Indian
+
+Activities
+"""
+# Parse resume and print JSON output
+print(parse_resume(resume_text))
